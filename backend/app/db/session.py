@@ -19,6 +19,8 @@ from app.config.vars import variables
 
 # TODO: remove echo in production
 engine = create_engine(variables.DB_STRING)
+
+# Create a session factory for creating new database sessions
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

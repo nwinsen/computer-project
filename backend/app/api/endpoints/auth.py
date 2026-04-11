@@ -59,9 +59,7 @@ async def auth_signup(user: schemas.UserIn, db: SessionDep):
 @router.get("/user/refresh")
 async def refresh_token(request: Request):
     token = request.cookies.get("refresh_token")
-    # print(token)
     user_email = utils.crypt.decode_refresh_token(token)
-    print(user_email)
     if user_email:
         access_token_expires = config.variables.ACCESS_TOKEN_EXPIRY
         return {

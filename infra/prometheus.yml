@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "lolapp-backend"
+    static_configs:
+      # TODO: Replace with your app host's Tailscale IP (find with: tailscale ip -4)
+      - targets: ["TAILSCALE_IP:8000"]
+    metrics_path: "/metrics"
+    scrape_interval: 15s

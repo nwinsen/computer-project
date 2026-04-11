@@ -38,7 +38,7 @@ async def get_account_data_on_page_load(
             return {}
         return schemas.RiotAccount.model_validate(user)
     except Exception as e:
-        print("Error on insertion of user", e)
+        return {}
 
 
 @router.get("/riot/user/{puuid}/match/{match_id}", response_model=dict)
@@ -72,7 +72,6 @@ async def get_match_information(
         response.headers["ETag"] = f"{match_id}-{puuid}"
         return ret_dict
     else:
-        print("Match not found in database...\nQuerying Riot API")
         match_info = services.query_match_stats(match_id)
         if match_info is None:
             return {}

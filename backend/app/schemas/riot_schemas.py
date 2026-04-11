@@ -1,9 +1,13 @@
-from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from typing import List
 
+from pydantic import BaseModel
+from pydantic.config import ConfigDict
+
 
 class RiotAccount(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     puuid: str
     profile_icon_id: int
     riot_id: str
@@ -16,11 +20,14 @@ class RiotAccount(BaseModel):
     last_updated: datetime
 
     # this subclass is here so that we can build an instance of this Model from a dictionary
-    class Config:
-        from_attributes = True
+    # Deprecated
+    # class Config:
+    #     from_attributes = True
 
 
 class Match(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     match_id: str
     game_create_timestamp: datetime
     game_end_timestamp: datetime
@@ -29,12 +36,10 @@ class Match(BaseModel):
     team200_win: bool
     all_players: List[str]
 
-    # this subclass is here so that we can build an instance of this Model from a dictionary
-    class Config:
-        from_attributes = True
-
 
 class Player(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     riot_id: str
     match_id: str
@@ -57,12 +62,10 @@ class Player(BaseModel):
     lane: str
     win: bool
 
-    # this subclass is here so that we can build an instance of this Model from a dictionary
-    class Config:
-        from_attributes = True
-
 
 class Stat(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     player_id: int
     match_id: str
@@ -76,8 +79,3 @@ class Stat(BaseModel):
     vision_score: int
     turret_kills: int
     inhibitor_kills: int
-    vision_score: int
-
-    # this subclass is here so that we can build an instance of this Model from a dictionary
-    class Config:
-        from_attributes = True
