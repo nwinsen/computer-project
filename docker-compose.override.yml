@@ -1,0 +1,23 @@
+# Development overrides - auto-loaded by docker compose
+version: "3.8"
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+
+  backend:
+    environment:
+      - UV_NO_DEV=0
+    volumes:
+      - ./backend:/app
+      - /var/log/lolapp:/var/log/lolapp
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev
+    environment:
+      - NEXT_PUBLIC_BASE_API_URL=http://localhost:8000/api

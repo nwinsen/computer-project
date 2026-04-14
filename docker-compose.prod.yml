@@ -1,0 +1,15 @@
+# Production compose - use with: docker compose -f docker-compose.yml -f docker-compose.prod.yml up
+version: "3.8"
+
+services:
+  postgres:
+    restart: unless-stopped
+
+  backend:
+    restart: unless-stopped
+    environment:
+      - UV_NO_DEV=1
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+  frontend:
+    restart: unless-stopped

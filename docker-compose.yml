@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: lolapp-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-lolapp}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: lolapp-backend
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_STRING: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-lolapp}
+      SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY:-dev-secret-key-change-in-prod}
+      SECRET_REFRESH_KEY: ${SECRET_REFRESH_KEY:-dev-refresh-key-change-in-prod}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      LOG_FILE_PATH: /var/log/lolapp/app.log
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      UV_NO_DEV: ${UV_NO_DEV:-0}
+    volumes:
+      - /var/log/lolapp:/var/log/lolapp
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_BASE_API_URL: ${NEXT_PUBLIC_BASE_API_URL:-http://localhost:8000/api}
+        NEXT_PUBLIC_BASE_DATA_DRAGON_URL: ${NEXT_PUBLIC_BASE_DATA_DRAGON_URL:-https://ddragon.leagueoflegends.com/cdn/14.20.1/data/en_US/}
+    container_name: lolapp-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
